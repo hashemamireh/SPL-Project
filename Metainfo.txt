@@ -1,0 +1,6 @@
+Name of Quantlet : FreqTrump
+Published in : HU course: Statistical Programming languages
+Description : Plot showing the frequency of most used words on Donald Trumps Twitter
+Keywords : frequency, Trump, social media, Twitter, fake news
+Author : Asbjoern Kamp Johannesen
+
