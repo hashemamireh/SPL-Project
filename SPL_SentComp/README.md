@@ -5,72 +5,92 @@
 
 ```yaml
 
-Name of QuantLet : MSMasymptoticnormality2
 
-Published in : MSM
+Name of Quantlet : SPL_SentComp
 
-Description : 'Shows an example of random variables not following asymptotic normality. For this
-specific example a set of Cauchy random variables was selected and its asymptotic distribution was
-compared with binomial and normal distributions.'
+Published in : SPL
 
-Keywords : 'standard-normal, asymptotic, graphical representation, pdf, Cauchy,distribution,
-binomial'
+Description : 'A comparison between sentiment analysis of Trumps Tweets in the period of the 7th of septemper 2017 to the 2nd of February 2018. The figure shows 4 Sentiment analysis which have ben ran with different sentiment lexicons. Each plot represents total scores of Tweets (sum of positive and negative words for each Tweet) for each day. Note that one day can contain several Tweets why it both can take positive and negative values.'
 
-Author [New] : Luis Alejandro Sarmiento Abogado
+Keywords : 
+- sentiment analysis
+- text mining
+- ggplot2
+- student
+- visualisation
+- statistics
 
-Submitted : Mon, February 08 2016 by Chen Huang
+Author : Asbjoern Kamp Johannesen
+
+Submitted : Wed, February 21 2018 by Asbjoern Kamp Johannesen
+
+Datafile : 'Hu_and_Liu.Rdata, TrumpTweets.Rdata'
 
 ```
 
-![Picture1](MSMasymptoticnormality2.png)
+![Picture1](SentComp.png)
 
 
 ### R Code:
 ```r
 
-## clear history
-rm(list = ls(all = TRUE))
-graphics.off()
+rm(list = ls())
 
-## install and load packages
-libraries = c("MASS", "KernSmooth")
-lapply(libraries, function(x) if (!(x %in% installed.packages())) {
-    install.packages(x)
-})
-lapply(libraries, library, quietly = TRUE, character.only = TRUE)
+load("Hu_and_Liu.csv")
 
-## Setting parameters
-p = 0.5
-n = 1000
+# Get data
+library("twitteR")
+consumerKey = "OzPjAMbWrU3P9mj2G1IP6uTDo"
+consuemrSecret = "KOc6nB1nuUEYt1OPgkstbs6m7nJjjkFMTXK3GOg1nenPynhavZ"
+accessToken = "3032742052-DBynC4JFEChlKnmbnDvTRstaEofU8XoRPdA7lQJ"
+accessTokenSecret = "6H8zTIijSqKAnWDVo5YQ0tZnErEJxuTQShQ7pOavEC8ij"
+setup_twitter_oauth(consumerKey, consuemrSecret, accessToken, accessTokenSecret)
+1
+trump.tweets = userTimeline("realDonaldTrump", n = 3200, excludeReplies = FALSE, includeRts = FALSE)
+df = do.call("rbind", lapply(trump.tweets, as.data.frame))
 
-## Random generation from binomial distribution with parameters 1000*n and p
+#The command above contains the newest Tweets. For exact repliacation of the figure, one needs to use same time span as we did. It this is the case, load this dataframe. If not, skip this part.
+load("TrumpTweets.Rdata")
 
-bsample = rbinom(n * 1000, 1, p)
+#Clean data 
+library("tidytext")
+library("dplyr")
+df$text = sapply(df$text, function(row) iconv(row, "latin1", "ASCII", sub = ""))
+df$text = gsub("(f|ht)tp(s?)://(.*)[.][a-z]+", "", df$text)
+df$date = format(as.Date(df$created), "%y-%m-%d")
+df$time = format(df$created, "%H:%M:%S")
+tf = df %>% unnest_tokens(word, text, drop = FALSE) %>% anti_join(stop_words)
 
-## Create a matrix of binomial random variables
+# Get Lexicons and combine them
+library("tidyr")
 
-bsamplem = matrix(bsample, n, 1000)
+afinn = tf %>% inner_join(get_sentiments("afinn")) %>% group_by(index = text) %>% summarise(afisent = sum(score))
 
-## Estimate kernel density
+bing = tf %>% inner_join(get_sentiments("bing")) %>% count(index = text, sentiment) %>% spread(sentiment, n, fill = 0) %>% 
+    mutate(binsent = positive - negative) %>% select(-positive) %>% select(-negative)
 
-bden = bkde((colMeans(bsamplem) - p)/sqrt(p * (1 - p)/n))
+nrc = tf %>% inner_join(get_sentiments("nrc")) %>% filter(sentiment %in% c("positive", "negative")) %>% count(index = text, 
+    sentiment) %>% spread(sentiment, n, fill = 0) %>% mutate(nrcsent = positive - negative) %>% select(-positive) %>% select(-negative)
 
-## Plot the three distributions
-plot(bden, col = "blue3", type = "l", lty = 1, lwd = 1, xlab = "", ylab = "Density", 
-    main = "Cauchy, Normal and Binomial distributions", cex.lab = 1, cex.axis = 1, 
-    ylim = c(0, 0.45))
+# Merge these into a dateframe and add time
+SentFrame = merge(afinn, bing, all = TRUE, by = c("index"))
+SentFrame = merge(SentFrame, nrc, all = TRUE, by = c("index"))
+SentFrame = merge(SentFrame, Hu_and_Liu, all = TRUE, by = c("index"))
+a = df
+a$index = a$text
+a = a[, -c(1:16)]
+a = a[, -2]
+SentFrame = merge(SentFrame, a, by = c("index"))
+SentFrame[is.na(SentFrame)] = 0
 
-plot(dnorm, -4, 4, n = 1000, col = "Green", add = TRUE)
-
-plot(dcauchy, -4, 4, n = 1000, col = "red", add = TRUE)
-
-## Set the legend
-legend("topleft", c("Binomial Distribution", "Normal Distribution", "Cauchy Distribution"), 
-    lty = 1, col = c("blue", "green", "red"), cex = 0.9)
-
-
-
-
- 
+# Plot these together
+library("ggplot2")
+library("ggpubr")
+Afinn = ggplot(data = SentFrame, aes(x = date, y = afisent)) + theme_classic() + geom_col() + theme(axis.title.x = element_blank()) + labs(y = "Afinn")
+Bing = ggplot(data = SentFrame, aes(x = date, y = binsent)) + theme_classic() + geom_col() + theme(axis.title.x = element_blank()) + labs(y = "Bing et al.")
+NRC = ggplot(data = SentFrame, aes(x = date, y = nrcsent)) + theme_classic() + geom_col() + theme(axis.title.x = element_blank()) + labs(y = "NRC")
+HuLiu = ggplot(data = SentFrame, aes(x = date, y = hulsent)) + theme_classic() + geom_col() + theme(axis.text.x = element_text(angle = 90)) + 
+    labs(y = "Hu and Liu", x = "Date")
+ggarrange(Afinn + rremove("x.text"), Bing + rremove("x.text"), NRC + rremove("x.text"), HuLiu, ncol = 1, nrow = 4)
 
 ```
