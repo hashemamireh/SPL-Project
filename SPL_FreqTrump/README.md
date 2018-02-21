@@ -1,51 +1,67 @@
 
 [<img src="https://github.com/QuantLet/Styleguide-and-FAQ/blob/master/pictures/banner.png" width="888" alt="Visit QuantNet">](http://quantlet.de/)
 
-## [<img src="https://github.com/QuantLet/Styleguide-and-FAQ/blob/master/pictures/qloqo.png" alt="Visit QuantNet">](http://quantlet.de/) **MSMpdfbinomial** [<img src="https://github.com/QuantLet/Styleguide-and-FAQ/blob/master/pictures/QN2.png" width="60" alt="Visit QuantNet 2.0">](http://quantlet.de/)
+## [<img src="https://github.com/QuantLet/Styleguide-and-FAQ/blob/master/pictures/qloqo.png" alt="Visit QuantNet">](http://quantlet.de/) **SPL_FreqTrump** [<img src="https://github.com/QuantLet/Styleguide-and-FAQ/blob/master/pictures/QN2.png" width="60" alt="Visit QuantNet 2.0">](http://quantlet.de/)
 
 ```yaml
 
-Name of QuantLet : MSMpdfbinomial
 
-Published in : MSM
+Name of Quantlet : SPL_FreqTrump
 
-Description : 'Plots three PDFs of the Binomial distribution with different probabilities of
-success (p) in each trial. The number of trials is set to 20. The line colours correspond to p =
-0.1 (blue), p = 0.5 (green) and p = 0.8 (dark red).'
+Published in : SPL
 
-Keywords : pdf, binomial, distribution, parameter, visualization, plot, discrete
+Description : 'A frequency plot of Donald Trumps most used words in his Tweets in the period the 7th of septemper 2017 to the 2nd of February 2018'
 
-See also : MSMasprob, SFEbinomv, SFEBinomial
+Keywords : 
+- text mining
+- frequency
+- ggplot2
+- student
+- visualisation
+- statistics
 
-Author : Xiu Xu
+Author : Asbjoern Kamp Johannesen
 
-Submitted : Thu, November 5 2015 by Chen Huang
+Submitted : Wed, February 21 2018 by Asbjoern Kamp Johannesen
 
-Example : Plot of the PDF of binomial distribution.
+Datafile : 'TrumpTweets.Rdata'
 
 ```
 
-![Picture1](MSMpdfbinomial.png)
+![Picture1](SPL_FreqTrump.png)
 
 
 ### R Code:
 ```r
 
-# clear history
-rm(list = ls(all = TRUE))
-graphics.off()
+rm(list = ls())
 
-# Plot the PDF
-y1 = dbinom(0:20, 20, 0.1)
-y2 = dbinom(0:20, 20, 0.5)
-y3 = dbinom(0:20, 20, 0.8)
+# Setup authorization for twitter
+require("twitteR")
+consumerKey = "OzPjAMbWrU3P9mj2G1IP6uTDo"
+consuemrSecret = "KOc6nB1nuUEYt1OPgkstbs6m7nJjjkFMTXK3GOg1nenPynhavZ"
+accessToken = "3032742052-DBynC4JFEChlKnmbnDvTRstaEofU8XoRPdA7lQJ"
+accessTokenSecret = "6H8zTIijSqKAnWDVo5YQ0tZnErEJxuTQShQ7pOavEC8ij"
+setup_twitter_oauth(consumerKey, consuemrSecret, accessToken, accessTokenSecret)
+1
 
-plot(y1, col = "blue", type = "h", lwd = 2.5, ylab = "", xlab = "")
-points(y1, col = "blue", type = "p", pch = 20, lwd = 0.1, ylim = c(0, 0.3))
-lines(y2, col = "darkolivegreen4", type = "h", lwd = 2.5, ylab = "", xlab = "")
-points(y2, col = "darkolivegreen4", type = "p", pch = 20, lwd = 0.1, ylim = c(0, 
-    0.3))
-lines(y3, col = "chocolate4", type = "h", lwd = 2.5, ylab = "", xlab = "")
-points(y3, col = "chocolate4", type = "p", pch = 20, lwd = 0.1, ylim = c(0, 0.3)) 
+# Geet Trumps Tweets (Max limit 3200: 418 own tweets, the rest is Trumps retweets) + make data frame
+trump.tweets = userTimeline("realDonaldTrump", n = 3200, excludeReplies = FALSE, includeRts = FALSE)
+df = do.call("rbind", lapply(trump.tweets, as.data.frame))
 
+#The command above contains the newest Tweets. For exact repliacation of the figure, one needs to use same time span as we did. It this is the case, load this dataframe. If not, skip this part
+load("TrumpTweets.Rdata")
+
+
+#Clean data
+df$text = sapply(df$text, function(row) iconv(row, "latin1", "ASCII", sub = ""))
+df$text = gsub("(f|ht)tp(s?)://(.*)[.][a-z]+", "", df$text)
+require("tidytext")
+require("dplyr")
+tf = df %>% unnest_tokens(word, text) %>% anti_join(stop_words)
+
+# Plot data
+library("ggplot2")
+tf %>% count(word, sort = TRUE) %>% filter(n > 10) %>% filter(!word=="amp") %>% mutate(word = reorder(word, n)) %>% ggplot(aes(word, n)) + 
+  geom_col() + theme_classic() + xlab(NULL) + ylab(label="Frequency") + coord_flip()
 ```
