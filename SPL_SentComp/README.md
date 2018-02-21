@@ -24,7 +24,7 @@ Datafile : 'Hu_and_Liu.Rdata, TrumpTweets.Rdata'
 
 ```
 
-![Picture1](SentComp.png)
+![Picture1](SPL_SentComp.png)
 
 
 ### R Code:
