@@ -1,1 +1,20 @@
-fe
+
+Name of Quantlet : SPL_SentComp
+
+Published in : SPL
+
+Description : 'A comparison between sentiment analysis of Trumps Tweets in the period of the 7th of septemper 2017 to the 2nd of February 2018. The figure shows 4 Sentiment analysis which have ben ran with different sentiment lexicons. Each plot represents total scores of Tweets (sum of positive and negative words for each Tweet) for each day. Note that one day can contain several Tweets why it both can take positive and negative values.'
+
+Keywords : 
+- sentiment analysis
+- text mining
+- ggplot2
+- student
+- visualisation
+- statistics
+
+Author : Asbjoern Kamp Johannesen
+
+Submitted : Wed, February 21 2018 by Asbjoern Kamp Johannesen
+
+Datafile : 'Hu_and_Liu.Rdata, TrumpTweets.Rdata'
