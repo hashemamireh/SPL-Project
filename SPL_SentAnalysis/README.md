@@ -6,62 +6,126 @@
 ```yaml
 
 
-Name of Quantlet : SPL_FreqTrump
+Name of Quantlet : SPL_SentAnalysis
 
 Published in : SPL
 
-Description : 'A frequency plot of Donald Trumps most used words in his Tweets in the period the 7th of septemper 2017 to the 2nd of February 2018'
+Description : 'A Sentiment Analysis used to score tweets (but potentially any other kind of text string), with inspiration from https://github.com/Twitter-Sentiment-Analysis/R'
 
 Keywords : 
 - text mining
 - frequency
-- ggplot2
+- sentiment analysis
 - student
-- visualisation
+- quantifying text
 - statistics
 
-Author : Asbjoern Kamp Johannesen
+Author : Jakob Lyngsø Jørgensen
 
-Submitted : Wed, February 21 2018 by Asbjoern Kamp Johannesen
+Submitted : Thu, March 8 2018 by Jakob Lyngsø Jørgensen
 
-Datafile : 'TrumpTweets.Rdata'
+Datafile : 'Trump.Twitter.WC.Rdata'
 
 ```
-
-![Picture1](SPL_FreqTrump.png)
-
 
 ### R Code:
 ```r
 
 rm(list = ls())
 
-# Setup authorization for twitter
-require("twitteR")
-consumerKey = "OzPjAMbWrU3P9mj2G1IP6uTDo"
-consuemrSecret = "KOc6nB1nuUEYt1OPgkstbs6m7nJjjkFMTXK3GOg1nenPynhavZ"
-accessToken = "3032742052-DBynC4JFEChlKnmbnDvTRstaEofU8XoRPdA7lQJ"
-accessTokenSecret = "6H8zTIijSqKAnWDVo5YQ0tZnErEJxuTQShQ7pOavEC8ij"
-setup_twitter_oauth(consumerKey, consuemrSecret, accessToken, accessTokenSecret)
-1
+#Download packages
+library(twitteR)
 
-# Geet Trumps Tweets (Max limit 3200: 418 own tweets, the rest is Trumps retweets) + make data frame
-trump.tweets = userTimeline("realDonaldTrump", n = 3200, excludeReplies = FALSE, includeRts = FALSE)
+#API keys and tokens are generated here: https://apps.twitter.com/
+consumerKey = "MwfIc4YZdGtFFylMUVFKYoGmE"
+consuemrSecret =	"sTZ41t2jWhuI9LyGr8NjXMoK4gvGvJrhsmj5m8s4wVPznBVCY7"
+accessToken = "2189862760-0bLvEQgo4nPQIptGTfc4LQPBCP6b8W219cSvwWS"
+accessTokenSecret = "rP0r1S0zism7tRnqNJwGSPN6Js3p5snEKAfEAmIiqCQ5I"
+
+#Setup authorization
+setup_twitter_oauth(consumerKey, consuemrSecret, accessToken, accessTokenSecret)
+
+#Get Trump Tweets
+trump.tweets=userTimeline("realDonaldTrump", n=3200,excludeReplies=FALSE,includeRts=FALSE)
 df = do.call("rbind", lapply(trump.tweets, as.data.frame))
 
-#The command above contains the newest Tweets. For exact repliacation of the figure, one needs to use same time span as we did. It this is the case, load this dataframe. If not, skip this part
-load("TrumpTweets.Rdata")
+Trump.Tweets.WC <- df
+save(Trump.Tweets.WC,file="Trump.Tweets.WC.Rdata")
 
+##-----Analytical Work------
 
-#Clean data
-df$text = sapply(df$text, function(row) iconv(row, "latin1", "ASCII", sub = ""))
+##Data Cleaning - Removing odd characters
+df$text = sapply(df$text,function(row) iconv(row, "latin1", "ASCII", sub=""))
 df$text = gsub("(f|ht)tp(s?)://(.*)[.][a-z]+", "", df$text)
-require("tidytext")
-require("dplyr")
-tf = df %>% unnest_tokens(word, text) %>% anti_join(stop_words)
 
-# Plot data
-library("ggplot2")
-tf %>% count(word, sort = TRUE) %>% filter(n > 10) %>% filter(!word=="amp") %>% mutate(word = reorder(word, n)) %>% ggplot(aes(word, n)) + 
-  geom_col() + theme_classic() + xlab(NULL) + ylab(label="Frequency") + coord_flip()
+##Define Lexicons Used
+positive.lexicon = scan("C:/Users/jakob/Documents/Humboldt/SPL/positive-words.txt", what="character", comment.char=";")
+negative.lexicon = scan("C:/Users/jakob/Documents/Humboldt/SPL/negative-words.txt", what="character", comment.char=";")
+
+# Add own neg/pos words
+positive.lexicon =c(positive.lexicon,'upgrade')
+negative.lexicon = c(negative.lexicon,"WTF", 'FAKE NEWS', 'douchebag')
+
+##Sentiment Score Function
+require("plyr")
+require("stringr")
+
+sentimentAnalysisFunction = function(strings, positive.lexicon, negative.lexicon, .progress="none")
+{
+  list=lapply(strings, function(one.string, positive.lexicon, negative.lexicon)
+  {
+    #Remove punctuation
+    one.string = gsub("[[:punct:]]"," ",one.string)
+    #Remove control characters
+    one.string = gsub("[[:cntrl:]]","",one.string)
+    #Remove numbers (\d+ is regEx)
+    one.string = gsub("\\d+","",one.string)
+    #Remove linebreaks (\n is regEx)
+    one.string = gsub("\n","",one.string)                     
+    
+    #Data transformation
+    #Changing to all lowercase letters
+    one.string = tolower(one.string)
+    #Step 1/2: Taking each word and make list
+    word.list = str_split(one.string, "\\s+")
+    #Step 2/2: Transform to character vector
+    words = unlist(word.list)                                 
+     
+    #Word Matching and sentiment scoring
+    #Match positive (vector and pos.lexicon)
+    positive.matches = match(words, positive.lexicon)
+    #Match negative (vector and neg.lexicon)
+    negative.matches = match(words, negative.lexicon)
+    #Change to match=TRUE, NA=FALSE
+    positive.matches = !is.na(positive.matches)               
+    negative.matches = !is.na(negative.matches)
+    #Sum up matches
+    sum.positive.matches = sum(positive.matches)              
+    sum.negative.matches = sum(negative.matches)
+    #Calculate sentiment score
+    score = sum(positive.matches) - sum(negative.matches)
+    #Make vector of score and mathces
+    list1=c(score, sum.positive.matches, sum.negative.matches)
+    return (list1)
+  }, positive.lexicon, negative.lexicon)
+   
+  #Data transformation to output format
+  #Take first coloumn from list
+  score_new=lapply(list, "[[", 1)
+  #Take second coloumn from list
+  sum.positive.matches1=score=lapply(list, "[[", 2)
+  #Take Third coloumn from list
+  sum.negative.matches1=score=lapply(list, "[[", 3)           
+  
+  #Make dataframe of score and tweets
+  total.scores.df = data.frame(score=score_new, text=strings) 
+  #Make df of positive matches and tweets
+  total.positive.df = data.frame(Positive=sum.positive.matches1, text=strings)
+  #make df of negative matches and tweets
+  total.negative.df = data.frame(Negative=sum.negative.matches1, text=strings)
+  
+  #Combine above dataframe into a list of three elements
+  list_df=list(total.scores.df, total.positive.df, total.negative.df)
+  return(list_df)
+}
 ```
