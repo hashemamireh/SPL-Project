@@ -28,7 +28,7 @@ Datafile : 'TrumpTweets.Rdata'
 
 ```
 
-![Picture1](SPL_FreqTrump.png)
+![Picture1](SPL_WordCloud.png)
 
 
 ### R Code:
