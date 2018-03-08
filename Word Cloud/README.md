@@ -1,3 +1,4 @@
+
 [<img src="https://github.com/QuantLet/Styleguide-and-FAQ/blob/master/pictures/banner.png" width="888" alt="Visit QuantNet">](http://quantlet.de/)
 
 ## [<img src="https://github.com/QuantLet/Styleguide-and-FAQ/blob/master/pictures/qloqo.png" alt="Visit QuantNet">](http://quantlet.de/) **SPL_FreqTrump** [<img src="https://github.com/QuantLet/Styleguide-and-FAQ/blob/master/pictures/QN2.png" width="60" alt="Visit QuantNet 2.0">](http://quantlet.de/)
@@ -27,7 +28,7 @@ Datafile : 'TrumpTweets.Rdata'
 
 ```
 
-![Picture1](SPL_WordCloud.png)
+![Picture1](SPL_FreqTrump.png)
 
 
 ### R Code:
@@ -50,3 +51,17 @@ df = do.call("rbind", lapply(trump.tweets, as.data.frame))
 
 #The command above contains the newest Tweets. For exact repliacation of the figure, one needs to use same time span as we did. It this is the case, load this dataframe. If not, skip this part
 load("TrumpTweets.Rdata")
+
+
+#Clean data
+df$text = sapply(df$text, function(row) iconv(row, "latin1", "ASCII", sub = ""))
+df$text = gsub("(f|ht)tp(s?)://(.*)[.][a-z]+", "", df$text)
+require("tidytext")
+require("dplyr")
+tf = df %>% unnest_tokens(word, text) %>% anti_join(stop_words)
+
+# Plot data
+library("ggplot2")
+tf %>% count(word, sort = TRUE) %>% filter(n > 10) %>% filter(!word=="amp") %>% mutate(word = reorder(word, n)) %>% ggplot(aes(word, n)) + 
+  geom_col() + theme_classic() + xlab(NULL) + ylab(label="Frequency") + coord_flip()
+```
