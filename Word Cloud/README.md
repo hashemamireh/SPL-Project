@@ -6,7 +6,7 @@
 ```yaml
 
 
-Name of Quantlet : SPL_FreqTrump
+Name of Quantlet : SPL_WordCloudTrump
 
 Published in : SPL
 
