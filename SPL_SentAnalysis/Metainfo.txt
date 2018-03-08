@@ -1,0 +1,20 @@
+
+Name of Quantlet : SPL_FreqTrump
+
+Published in : SPL
+
+Description : 'A frequency plot of Donald Trumps most used words in his Tweets in the period the 7th of septemper 2017 to the 2nd of February 2018'
+
+Keywords : 
+- text mining
+- frequency
+- ggplot2
+- student
+- visualisation
+- statistics
+
+Author : Asbjoern Kamp Johannesen
+
+Submitted : Wed, February 21 2018 by Asbjoern Kamp Johannesen
+
+Datafile : 'TrumpTweets.Rdata'

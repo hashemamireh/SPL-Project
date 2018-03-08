@@ -1,3 +1,8 @@
+#Download packages
+library(twitteR)
+library(wordcloud)
+library(tm)
+
 #API keys and tokens are generated here: https://apps.twitter.com/
 consumerKey = "MwfIc4YZdGtFFylMUVFKYoGmE"
 consuemrSecret =	"sTZ41t2jWhuI9LyGr8NjXMoK4gvGvJrhsmj5m8s4wVPznBVCY7"
@@ -10,6 +15,10 @@ setup_twitter_oauth(consumerKey, consuemrSecret, accessToken, accessTokenSecret)
 #Get Trump Tweets
 trump.tweets=userTimeline("realDonaldTrump", n=3200,excludeReplies=FALSE,includeRts=FALSE)
 df = do.call("rbind", lapply(trump.tweets, as.data.frame))
+
+Trump.Tweets.WC <- df
+save(Trump.Tweets.WC,file="Trump.Tweets.WC.Rdata")
+
 
 #Clean Data
 df_text = sapply(df$text,function(row) iconv(row, "latin1", "ASCII", sub=""))
@@ -26,3 +35,6 @@ df_cleaned = tm_map(df_cleaned, stripWhitespace) #Remove white spaces
 
 #produce word cloud
 wordcloud(df_cleaned, random.order=F,max.words=300, col=rainbow(50), scale=c(4,0.5))
+
+Trump.Tweets.WC <- df
+Save(Trump.Tweets.WC)
