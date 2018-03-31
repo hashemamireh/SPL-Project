@@ -1,0 +1,24 @@
+
+Name of Quantlet : SPL_Speeches
+
+Published in : SPL
+
+Description : 'A readability bar chart comparing Donald Trumps, Hillary Clintons, and Bernie Sanders language for the 2016 election cycle'
+
+Keywords : 
+- text analysis
+- readability
+- ggplot2
+- student
+- visualisation
+- statistics
+- text complexity
+- trump
+- clinton
+- sanders
+
+Author : Hashem Amireh
+
+
+
+Datafile : 'SpeechesAndDebates.RData'

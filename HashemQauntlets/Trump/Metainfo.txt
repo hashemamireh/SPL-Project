@@ -1,0 +1,23 @@
+
+Name of Quantlet : SPL_Trump
+
+Published in : SPL
+
+Description : 'A bar chart comparing the readability of the language used by Donald Trump during the 2016 U.S. Presidential Election campaign' as well as his supporters on Reddit.'
+
+Keywords : 
+- text analysis
+
+- readability
+- ggplot2
+- student
+- visualisation
+- statistics
+- text complexity
+- Trump
+
+Author : Hashem Amireh
+
+
+
+Datafile : 'SpeechesAndDebates.RData', 'SubredditsReadability.RData'

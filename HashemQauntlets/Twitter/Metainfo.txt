@@ -1,0 +1,25 @@
+
+Name of Quantlet : SPL_Speeches
+
+Published in : SPL
+
+Description : 'A bar chart comparing the readability of the language used by Donald Trump, Hillary Clinton, and Bernie Sanders, and Barack Obama on twitter'
+
+Keywords : 
+- text analysis
+- readability
+- ggplot2
+- student
+- visualisation
+- statistics
+- text complexity
+- trump
+- clinton
+- sanders
+- obama
+
+Author : Hashem Amireh
+
+
+
+Datafile : 'TweetReadability.RData'

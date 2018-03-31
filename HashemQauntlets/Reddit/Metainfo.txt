@@ -1,0 +1,25 @@
+
+Name of Quantlet : SPL_Speeches
+
+Published in : SPL
+
+Description : 'A bar chart comparing the readability of the language used by authors on the subreddits The_Donald, HillaryClinton, Resist, and SandersForPresident on reddit'
+
+Keywords : 
+- text analysis
+- readability
+- ggplot2
+- student
+- visualisation
+- statistics
+- text complexity
+- trump
+- clinton
+- sanders
+- reddit
+
+Author : Hashem Amireh
+
+
+
+Datafile : 'SubredditReadability.RData'

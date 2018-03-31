@@ -1,0 +1,23 @@
+
+Name of Quantlet : SPL_Debate2
+
+Published in : SPL
+
+Description : 'A readability bar chart comparing Donald Trumps and Hillary Clintons language for the Second U.S. Presidenttial Debate for the 2016 election cycle'
+
+Keywords : 
+- text analysis
+- readability
+- ggplot2
+- student
+- visualisation
+- statistics
+- text complexity
+- trump
+- clinton
+
+Author : Hashem Amireh
+
+
+
+Datafile : 'SpeechesAndDebate.RData'

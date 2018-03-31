@@ -1,0 +1,22 @@
+
+Name of Quantlet : SPL_AvgAge
+
+Published in : SPL
+
+Description : 'A bar chart comparing the number of suspended users per 1000 users for several political subreddits on reddit'
+
+Keywords : 
+- reddit
+- readability
+- ggplot2
+- student
+- visualisation
+- statistics
+- bots
+
+
+Author : Hashem Amireh
+
+
+
+Datafile : 'SubTop.RData', 'RedditAuthors.RData'

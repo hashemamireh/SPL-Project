@@ -43,7 +43,7 @@ df = rbind(
 df$accountAge = difftime(df$postDateTime, df$userSince, units = "days")
 
 # Calculate the average account age and the suspended user per 100 users for every subreddit
-# Dleted users per 1000 users was also created but not used in the paper
+# Deleted users per 1000 users was also created but not used in the paper
 results = matrix(nrow = 0, ncol = 4)
 for(i in unique(df$subreddit)){
   suspendedPer1000 = sum(df$isSuspended[df$subreddit == i], na.rm = TRUE)*1000/length(df$postAuthor[df$subreddit == i])

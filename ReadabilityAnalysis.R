@@ -10,7 +10,8 @@ library(parallel)
 # "Tagging" is a step that must be done first before koRpus can analyze the data
 tagged.Clinton.Speeches = tokenize("ClintonSpeeches/AllClintonSpeeches.txt", lang = "en")
 
-Speeches.Clinton.Readability = readability(tagged.Clinton.Speeches, index =  c("ARI", "Bormuth", "Coleman.Liau", "Dale.Chall",
+Speeches.Clinton.Readability = readability(tagged.Clinton.Speeches, index = 
+                                             c("ARI", "Bormuth", "Coleman.Liau", "Dale.Chall",
                                                                                 "Danielson.Bryan", "Dickes.Steiwer", "DRP", "ELF", "Farr.Jenkins.Paterson",
                                                                                 "Flesch", "Flesch.Kincaid", "FOG", "FORCAST", "Fucks",
                                                                                 "Linsear.Write", "LIX", "nWS", "RIX", "SMOG", "Spache", "Strain",
@@ -298,13 +299,14 @@ Comments = Comments[-excludeComments]
 for (i in 1:100) {
   upperlimit = ifelse(15000*i<length(Comments), 15000*i, length(Comments))
   tagged = tokenize(Comments[(15000*(i-1)+1):upperlimit], format = "obj", lang = "en")
-  temp = readability(tagged, index =  c("ARI", "Bormuth", "Coleman.Liau", "Dale.Chall",
-                                         "Danielson.Bryan", "Dickes.Steiwer", "DRP", "ELF", "Farr.Jenkins.Paterson",
-                                         "Flesch", "Flesch.Kincaid", "FOG", "FORCAST", "Fucks",
-                                         "Linsear.Write", "LIX", "nWS", "RIX", "SMOG", "Spache", "Strain",
-                                         "TRI", "Tuldava", "Wheeler.Smith"),
-                      word.lists = list(Bormuth = "Dale-Chall.txt", Dale.Chall = "Dale-Chall.txt", Harris.Jacobson = NULL,
-                                        Spache = "Spache.txt"))
+  temp = readability(tagged, index =
+         c("ARI", "Bormuth", "Coleman.Liau", "Dale.Chall",
+         "Danielson.Bryan", "Dickes.Steiwer", "DRP", "ELF", "Farr.Jenkins.Paterson",
+         "Flesch", "Flesch.Kincaid", "FOG", "FORCAST", "Fucks",
+         "Linsear.Write", "LIX", "nWS", "RIX", "SMOG", "Spache", "Strain",
+         "TRI", "Tuldava", "Wheeler.Smith"),
+         word.lists = list(Bormuth = "Dale-Chall.txt", Dale.Chall = "Dale-Chall.txt", Harris.Jacobson = NULL,
+         Spache = "Spache.txt"))
   if(i ==1){
     readability.Resist = summary(temp)
   }else{

@@ -1,0 +1,22 @@
+
+Name of Quantlet : SPL_Polarization
+
+Published in : SPL
+
+Description : 'A time series chart illustratung the log upvote score for several political subreddits on reddit'
+
+Keywords : 
+- reddit
+- readability
+- ggplot2
+- student
+- visualisation
+- statistics
+- polarization
+
+
+Author : Hashem Amireh
+
+
+
+Datafile : 'SubTop.RData'

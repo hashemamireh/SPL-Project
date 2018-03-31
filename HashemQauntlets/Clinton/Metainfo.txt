@@ -1,0 +1,22 @@
+
+Name of Quantlet : SPL_Clinton
+
+Published in : SPL
+
+Description : 'A bar chart comparing the readability of the language used by Hillary Clinton during the 2016 U.S. Presidential Election campaign' as well as her supporters on Reddit.'
+
+Keywords : 
+- text analysis
+- readability
+- ggplot2
+- student
+- visualisation
+- statistics
+- text complexity
+- clinton
+
+Author : Hashem Amireh
+
+
+
+Datafile : 'SpeechesAndDebates.RData', 'SubredditsReadability.RData'
