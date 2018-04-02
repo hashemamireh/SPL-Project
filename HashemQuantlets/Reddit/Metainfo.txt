@@ -22,4 +22,4 @@ Author : Hashem Amireh
 
 
 
-Datafile : 'SubredditReadability.RData'
+Datafile : SubredditReadability.RData

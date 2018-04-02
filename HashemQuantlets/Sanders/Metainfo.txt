@@ -19,4 +19,4 @@ Author : Hashem Amireh
 
 
 
-Datafile : 'SpeechesAndDebates.RData', 'SubredditsReadability.RData'
+Datafile : SpeechesAndDebates.RData, SubredditsReadability.RData

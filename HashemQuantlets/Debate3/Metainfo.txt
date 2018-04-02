@@ -20,4 +20,4 @@ Author : Hashem Amireh
 
 
 
-Datafile : 'SpeechesAndDebates.RData'
+Datafile : SpeechesAndDebates.RData

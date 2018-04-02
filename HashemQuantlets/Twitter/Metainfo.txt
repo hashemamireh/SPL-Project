@@ -22,4 +22,4 @@ Author : Hashem Amireh
 
 
 
-Datafile : 'TweetReadability.RData'
+Datafile : TweetReadability.RData
